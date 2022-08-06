@@ -1,0 +1,27 @@
+FROM alpine:3.15.5
+
+RUN apk add --no-cache --update git bash \
+        unzip curl \
+          vim wget ca-certificates \
+            gnupg openssl
+
+ARG TERRAFORM_VERSION=1.2.6
+ARG VAULT_VERSION=1.11.2
+
+WORKDIR tools
+
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip  \
+        && mv terraform /usr/local/bin/  \
+          && terraform --version
+
+RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip \
+    && unzip vault_${VAULT_VERSION}_linux_amd64.zip  \
+        &&  mv vault /usr/local/bin/  \
+            && vault --version
+
+RUN rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+         vault_${VAULT_VERSION}_linux_amd64.zip
+
+
+CMD ["/bin/bash"]
