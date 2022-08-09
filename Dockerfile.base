@@ -1,12 +1,13 @@
 FROM alpine:3.15.5
 
 RUN apk add --no-cache --update git bash \
-        unzip curl \
+        unzip curl jq \
           vim wget ca-certificates \
-            gnupg openssl
+            gnupg openssl 
 
 ARG TERRAFORM_VERSION=1.2.6
 ARG VAULT_VERSION=1.11.2
+ARG TFSEC_VERSION=1.27.1
 
 WORKDIR tools
 
@@ -19,6 +20,10 @@ RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VER
     && unzip vault_${VAULT_VERSION}_linux_amd64.zip  \
         &&  mv vault /usr/local/bin/  \
             && vault --version
+RUN wget https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 \
+        && chmod +x tfsec-linux-amd64 && \
+            mv tfsec-linux-amd64 /usr/local/bin/tfsec
+
 
 RUN rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
          vault_${VAULT_VERSION}_linux_amd64.zip
